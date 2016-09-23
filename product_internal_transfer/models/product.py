@@ -5,17 +5,21 @@
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).
 
 from openerp import api, fields, models, _
-from openerp.exceptions import UserError, ValidationError
+from openerp.exceptions import UserError
 
 
 class ProductProduct(models.Model):
 
-    _inherit = "product.product"
+    _inherit = "product.template"
 
     @api.multi
     def internal_transfer(self):
+        for rec in self:
+            if rec.attribute_line_ids and len(rec.attribute_line_ids)>1:
+                raise UserError(_("Multiple variants!! "
+                                  "Please Start the transfer from the product variant."))
+        product = rec.attribute_line_ids
         "Creates a picking of internal transfer for the product."
-        self.ensure_one()
         picking_obj = self.env['stock.picking']
         type_obj = self.env['stock.picking.type']
         user_obj = self.env['res.users']
@@ -29,7 +33,7 @@ class ProductProduct(models.Model):
         picking_type = types[0]
         # on_change for product
         new_line = move_obj.new()
-        res = new_line.onchange_product_id(prod_id=self.id)
+        res = new_line.onchange_product_id(prod_id=product.id)
         # on_change for picking type
         new_line = picking_obj.new()
         vals = new_line.onchange_picking_type(picking_type_id=picking_type.id,
@@ -41,7 +45,7 @@ class ProductProduct(models.Model):
             'picking_type_code': vals.get('value').get('picking_type_code'),
             'move_lines': [(0, 0, {
                 'name': res.get('value').get('name'),
-                'product_id': self.id,
+                'product_id': product.id,
                 'product_uom_qty': res.get('value').get('product_uom_qty'),
                 'product_uom': res.get('value').get('product_uom'),
                 'state': 'draft',

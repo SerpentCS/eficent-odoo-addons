@@ -2,8 +2,7 @@
 <!-- Copyright 2015 Eficent Business and IT Consulting Services S.L.
      Serpent Consulting Services Pvt. Ltd.
      License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl-3.0) -->
-<openerp>
-    <data>
+<odoo>
 
         <record model="ir.ui.view" id="product_normal_form_view_inherited">
             <field name="name">Product variant Form</field>
@@ -16,5 +15,25 @@
             </field>
         </record>
 
-     </data>
-</openerp>
+        <record model="ir.ui.view" id="product_variant_easy_edit_view_inherited">
+            <field name="name">Product variant Form 2</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_variant_easy_edit_view"/>
+            <field name="arch" type="xml">
+                <header position="inside">
+                    <button name="internal_transfer" string="Create Internal Transfer" type="object"/>
+                </header>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="product_template_only_form_view_inherited">
+            <field name="name">Product Template Form</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <header position="inside">
+                    <button name="internal_transfer" string="Create Internal Transfer" type="object"/>
+                </header>
+            </field>
+        </record>
+</odoo>
